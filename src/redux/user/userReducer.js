@@ -1,4 +1,4 @@
-import {FETCH_USERS_FAIL, FETCH_USERS_REQUEST, FETCH_USERS_SUCCESS} from "./userTypes";
+import {FETCH_USERS_FAIL, FETCH_USERS_REQUEST, FETCH_USERS_SUCCESS, FETCH_USER_DETAIL, FETCH_USER_DETAIL_SUCCESS, FETCH_USER_BULK_RECOVERY, FETCH_USER_BULK_RECOVERY_RESULT} from "./userTypes";
 
 const initState = {
     users: [],
@@ -14,7 +14,6 @@ const userReducer = (state = initState, action) => {
                 loading: true
             }
         case FETCH_USERS_SUCCESS:
-    console.log(action)
             return {
                 error: '',
                 users: action.payload
@@ -23,6 +22,25 @@ const userReducer = (state = initState, action) => {
             return {
                 error: action.payload,
                 users: []
+            }
+        case FETCH_USER_DETAIL:
+            return {
+                ...state,
+            }
+        case FETCH_USER_DETAIL_SUCCESS:
+            return {
+                ...state,
+                userDetail: action.payload
+            }
+        case FETCH_USER_BULK_RECOVERY:
+            return {
+                ...state,
+            }
+        case FETCH_USER_BULK_RECOVERY_RESULT:
+            console.log(action)
+            return {
+                ...state,
+                bulkRecoveryResult: action.payload
             }
         default:
             return state

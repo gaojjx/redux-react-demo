@@ -17,6 +17,11 @@ class BasicLayout extends Component {
             <BrowserRouter>
                 <Layout>
                     <Sider>
+                    <div className="sidebar-logo">
+
+                    <img src="https://ng.ant.design/assets/img/logo.svg" alt="logo"/>
+                    <h1>Ant Design Of Angular</h1>
+                    </div>
                         <Menu>
                             <Item key="1">
                                 <Link to="/user">Users</Link>
@@ -25,7 +30,7 @@ class BasicLayout extends Component {
                     </Sider>
                     <Layout>
                         {/*<Header>Header</Header>*/}
-                        <Content>
+                        <Content className="content">
                             <Route path="/user" component={UsersContainer}/>
                         </Content>
                         {/*<Footer>Footer</Footer>*/}

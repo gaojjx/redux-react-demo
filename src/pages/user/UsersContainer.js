@@ -1,13 +1,46 @@
-import React, {useEffect} from 'react';
-import {Table} from "antd";
+import React, {useEffect, useState} from 'react';
+import {Table, Button, Popconfirm, message, Divider} from "antd";
 import {connect} from "react-redux";
-import {fetchUsers} from "../../redux/user/userAction";
+import {fetchUsers, fetchUserDetail, bulkRecovery} from "../../redux/user/userAction";
 import { UserSearchForm } from "./components/UserSearchForm"
-
-const UsersContainer = ({usersData, fetchUsers}) => {
+import { UserDetailFormModal } from './components/UserDetailForm';
+const initialParams = {
+    name: '',
+    number: undefined,
+    type: 0,
+    active: true
+}
+const UsersContainer = ({usersData, fetchUsers, fetchUserDetail, userDetail, bulkRecovery, bulkRecoveryResult}) => {
+    const [selectedIds, setSelectedIds] = useState([])
+    const [showBulk, setShowBulk] = useState(false)
     useEffect(() => {
-        fetchUsers()
+        fetchUsers(initialParams)
     }, []);
+
+    const handleSearch = value => {
+        fetchUsers(value)
+    }
+
+    const rowSelection = {
+        onChange: rowSelectedKeys => {
+            setSelectedIds(rowSelectedKeys)
+            if (rowSelectedKeys.length === 0) setShowBulk(false)
+            if (!showBulk) setShowBulk(true)
+        }
+    }
+
+    const handleBulkRecovery = () => {
+        bulkRecovery(selectedIds)
+    }
+    // if (bulkRecoveryResult !== undefined) {
+    //     bulkRecoveryResult? message.success('Recovery Success') : message.warn('Recovery fail')
+    // }
+
+    const handleRecovery = id => {
+        bulkRecovery(id)
+        // bulkRecoveryResult? message.success('Rcovery Success') : message.warn('Recovery fail')
+    }
+
     const columns = [
         {
             title: 'name',
@@ -15,39 +48,56 @@ const UsersContainer = ({usersData, fetchUsers}) => {
             key: 'name'
         },
         {
-            title: 'username',
-            dataIndex: 'username',
-            key: 'username'
+            title: 'number',
+            dataIndex: 'number',
+            key: 'number'
         },
         {
-            title: 'e-mail',
-            dataIndex: 'email',
-            key: 'email'
+            title: 'createdTime',
+            dataIndex: 'createdtime',
+            key: 'createdtime'
         },
         {
-            title: 'phone',
-            dataIndex: 'phone',
-            key: 'phone',
+            title: 'action',
+            dataIndex: 'id',
+            key: 'id',
+            render: text => {
+                return (
+                    <>
+                        <UserDetailFormModal userDetail={userDetail} userId={text} fetchUserDetail={fetchUserDetail}>
+                            <Button type="primary">Detail</Button>
+                        </UserDetailFormModal>
+                        <Divider type="vertical"/>
+                        <Popconfirm onConfirm={() => handleRecovery(text)} title="Are you sure RECOVERY this user?">
+                            <Button type="danger">Recovery</Button>
+                        </Popconfirm>
+                    </>
+                )
+            }
         }
     ];
     return (
         <>
-        <UserSearchForm />
-        <Table columns={columns} dataSource={usersData} rowKey="id" />
+            <UserSearchForm handleSearch={handleSearch} showBulk={showBulk} bulkDelete={handleBulkRecovery} />
+            <Table columns={columns} dataSource={usersData} rowSelection={rowSelection} rowKey="id" />
         </>
     );
 };
 
 const mapStateToProps = state => {
-    console.log(state.user)
+    console.log(state)
     return {
-        usersData: state.user.users
+        usersData: state.user.users,
+        userDetail: state.user.userDetail ? state.user.userDetail : {},
+        bulkRecoveryResult: state.user.bulkRecoveryResult,
     }
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        fetchUsers: () => dispatch(fetchUsers())
+        fetchUsers: (params = initialParams) => dispatch(fetchUsers(params)),
+        fetchUserDetail: id => dispatch(fetchUserDetail(id)),
+        bulkRecovery: ids => dispatch(bulkRecovery(ids))
     }
 }
 
