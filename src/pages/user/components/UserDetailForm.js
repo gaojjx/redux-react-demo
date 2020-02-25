@@ -2,6 +2,7 @@ import React, {useState} from 'react'
 import { Form, Modal, } from 'antd'
 
 const UserDetailForm = ({userDetail, children, userId, fetchUserDetail}) => {
+
     const [visible, setVisible] = useState(false)
     const items = Object.entries(userDetail)
         .map(([key, value]) => {

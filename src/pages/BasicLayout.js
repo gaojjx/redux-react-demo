@@ -4,6 +4,7 @@ import {BrowserRouter, Link, Route} from "react-router-dom";
 import 'antd/dist/antd.css';
 import UsersContainer from "./user/UsersContainer";
 import "./BasicLayout.css"
+import RecordContainer from './record/RecordContainer';
 
 const {
     Sider,
@@ -22,9 +23,12 @@ class BasicLayout extends Component {
                     <img src="https://ng.ant.design/assets/img/logo.svg" alt="logo"/>
                     <h1>Ant Design Of Angular</h1>
                     </div>
-                        <Menu>
+                        <Menu defaultSelectedKeys="1">
                             <Item key="1">
-                                <Link to="/user">Users</Link>
+                                <Link to="/user">User</Link>
+                            </Item>
+                            <Item key="2">
+                                <Link to="/record">Record</Link>
                             </Item>
                         </Menu>
                     </Sider>
@@ -32,6 +36,7 @@ class BasicLayout extends Component {
                         {/*<Header>Header</Header>*/}
                         <Content className="content">
                             <Route path="/user" component={UsersContainer}/>
+                            <Route path="/record" component={RecordContainer} />
                         </Content>
                         {/*<Footer>Footer</Footer>*/}
                     </Layout>

@@ -1,4 +1,4 @@
-import {FETCH_USERS_FAIL, FETCH_USERS_REQUEST, FETCH_USERS_SUCCESS, FETCH_USER_DETAIL_SUCCESS, FETCH_USER_BULK_RECOVERY_RESULT} from './userTypes'
+import {FETCH_USERS_FAIL, FETCH_USERS_REQUEST, FETCH_USERS_SUCCESS, FETCH_USER_DETAIL_SUCCESS, FETCH_USER_BULK_RECOVERY_RESULT, FETCH_USER_BULK_RECOVERY} from './userTypes'
 
 const uri = '/user'
 const token = localStorage.getItem('token')
@@ -68,9 +68,10 @@ export const fetchUserDetailSucess = user => {
 
 export const bulkRecovery = ids => {
     return (dispatch) => {
+        dispatch(deleting())
         fetch(`${uri}/recovery`, {
             method: 'PUT',
-            body: JSON.stringify({userids: ids}),
+            body: JSON.stringify({userids: [...ids]}),
             headers: {
                 'Content-Type': 'application/json; charset=utf-8',
                 'Authorization': token
@@ -80,6 +81,12 @@ export const bulkRecovery = ids => {
         .then(result => {
             dispatch(bulkRecoveryResult(result.Success))
         })
+    }
+}
+
+export const deleting = () => {
+    return {
+        type: FETCH_USER_BULK_RECOVERY
     }
 }
 

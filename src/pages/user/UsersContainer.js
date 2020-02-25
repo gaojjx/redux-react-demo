@@ -10,7 +10,7 @@ const initialParams = {
     type: 0,
     active: true
 }
-const UsersContainer = ({usersData, fetchUsers, fetchUserDetail, userDetail, bulkRecovery, bulkRecoveryResult}) => {
+const UsersContainer = ({usersData, fetchUsers, fetchUserDetail, userDetail, bulkRecovery, recovery, bulkRecoveryResult}) => {
     const [selectedIds, setSelectedIds] = useState([])
     const [showBulk, setShowBulk] = useState(false)
     useEffect(() => {
@@ -32,9 +32,9 @@ const UsersContainer = ({usersData, fetchUsers, fetchUserDetail, userDetail, bul
     const handleBulkRecovery = () => {
         bulkRecovery(selectedIds)
     }
-    // if (bulkRecoveryResult !== undefined) {
-    //     bulkRecoveryResult? message.success('Recovery Success') : message.warn('Recovery fail')
-    // }
+    if (recovery) {
+        bulkRecoveryResult? message.success('Recovery Success') : message.warn('Recovery fail')
+    }
 
     const handleRecovery = id => {
         bulkRecovery(id)
@@ -90,6 +90,7 @@ const mapStateToProps = state => {
         usersData: state.user.users,
         userDetail: state.user.userDetail ? state.user.userDetail : {},
         bulkRecoveryResult: state.user.bulkRecoveryResult,
+        recovery: state.user.recovery,
     }
 }
 
