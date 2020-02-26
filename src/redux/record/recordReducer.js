@@ -1,10 +1,12 @@
-import { FETCH_RECORD_REQUEST, FETCH_RECORD_SUCCESS, UPDATE_RECORD_REQUEST, UPDATE_RECORD_RESULT, ADD_RECORD_REQUEST, ADD_RECORD_RESULT, OPEN_BOX_REQUEST, OPEN_BOX_RESULT, DELETE_RECORD_RESULT } from "./recordTypes"
+import { FETCH_RECORD_REQUEST, FETCH_RECORD_SUCCESS, UPDATE_RECORD_REQUEST, UPDATE_RECORD_RESULT, ADD_RECORD_REQUEST, ADD_RECORD_RESULT, OPEN_BOX_REQUEST, OPEN_BOX_RESULT, DELETE_RECORD_RESULT, DELETE_RECORD_DONE, ENDUSINGBOX_RESULT, ENDUSINGBOX_DONE } from "./recordTypes"
 
 const initialState = {
     records: [],
     loading: false,
     adding: false,
     deleting: false,
+    deleteRecordResult: undefined,
+    endUsingBoxResult: undefined,
 }
 
 const recordReducer = (state = initialState, action) => {
@@ -12,6 +14,8 @@ const recordReducer = (state = initialState, action) => {
         case FETCH_RECORD_REQUEST:
             return {
                 loading: true,
+                adding: false,
+                deleteRecordResult: undefined,
             }
         case FETCH_RECORD_SUCCESS: 
             return {
@@ -48,6 +52,21 @@ const recordReducer = (state = initialState, action) => {
             return {
                 ...state,
                 deleteRecordResult: action.payload,
+            }
+        case DELETE_RECORD_DONE:
+            return {
+                ...state,
+                deleteRecordResult: undefined
+            }
+        case ENDUSINGBOX_RESULT:
+            return {
+                ...state,
+                endUsingBoxResult: action.payload
+            }
+        case ENDUSINGBOX_DONE:
+            return {
+                ...state,
+                endUsingBoxResult: undefined
             }
         default:
             return state

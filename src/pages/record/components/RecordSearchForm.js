@@ -2,7 +2,7 @@ import React from 'react'
 import { Form, Row, Col, Input, Checkbox, Button, InputNumber, DatePicker } from 'antd'
 import './RecordSearchForm.css'
 const {Item} = Form
-const RecordSearchComponent = ({form, handleSearch, handleClickAdd}) => {
+const RecordSearchComponent = ({form, handleSearch, handleClickAdd, handleBulkDelete, bulkDeleteVisible}) => {
     const { getFieldDecorator } = form
     const checkNumber = (rule, value, callback) => {
         if (value >= 0) {
@@ -62,6 +62,8 @@ const RecordSearchComponent = ({form, handleSearch, handleClickAdd}) => {
                 </Row>
                 <Row span={24}>
                     <Col span={8}>
+                        {bulkDeleteVisible ? <Button type="danger" onClick={handleBulkDelete}>Delete</Button> : null}
+                        &emsp;
                         <Button type="primary" onClick={handleClickAdd}>Add</Button>
                     </Col>
                     <Col span={16} style={{textAlign: 'right'}}>

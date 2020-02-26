@@ -1,4 +1,4 @@
-import { FETCH_RECORD_REQUEST, FETCH_RECORD_SUCCESS, ADD_RECORD_RESULT, OPEN_BOX_RESULT, DELETE_RECORD_RESULT } from "./recordTypes"
+import { FETCH_RECORD_REQUEST, FETCH_RECORD_SUCCESS, ADD_RECORD_RESULT, OPEN_BOX_RESULT, DELETE_RECORD_RESULT, DELETE_RECORD_DONE, ENDUSINGBOX_RESULT, ENDUSINGBOX_DONE } from "./recordTypes"
 
 const URI = '/record'
 
@@ -102,6 +102,7 @@ export const deleteRecord = recordidlist => {
         ).then(res => res.json())
         .then(data => {
             dispatch(deleteRecordResult(JSON.parse(data)))
+            dispatch(deleteRecordDone())
         })
     }
 }
@@ -110,5 +111,42 @@ export const deleteRecordResult = result => {
     return {
         type: DELETE_RECORD_RESULT,
         payload: result
+    }
+}
+
+export const deleteRecordDone = () => {
+    return {
+        type: DELETE_RECORD_DONE,
+    }
+}
+
+export const endUsingBox = recordid => {
+    const token = localStorage.getItem('token')
+    return dispatch => {
+        fetch(`${URI}/endusingbox`, {
+            body: JSON.stringify({recordid}),
+            method: 'PUT',
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/json; charset=utf-8'
+            }
+        }).then(res => res.json())
+        .then(data => {
+            dispatch(endUsingBoxResult(JSON.parse(data)))
+            dispatch(endUsingBoxDone())
+        })
+    }
+}
+
+export const endUsingBoxResult = result => {
+    return {
+        type: ENDUSINGBOX_RESULT,
+        payload: result,
+    }
+}
+
+export const endUsingBoxDone = () => {
+    return {
+        type: ENDUSINGBOX_DONE
     }
 }

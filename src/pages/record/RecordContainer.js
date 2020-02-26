@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import { connect } from 'react-redux'
-import { fetchRecords, addRecord, openBox, deleteRecord } from '../../redux/record/recordAction'
+import { fetchRecords, addRecord, openBox, deleteRecord, endUsingBox } from '../../redux/record/recordAction'
 import { Table, Popconfirm, Button, Spin, message, Divider } from 'antd';
 import { RecordCreateModal } from './components/RecordCreateComponent';
 import { RecordSearchForm } from './components/RecordSearchForm';
@@ -21,12 +21,16 @@ export const RecordContainer = ({
         openBox,
         deleteRecord,
         deleteRecordResult,
+        endUsingBox,
+        endUsingBoxResult,
     }) => {
     useEffect(() => fetchRecord(initialParam), []);
     const [params, setParams] = useState(initialParam)
     const [showAddModal, setShowAddModal] = useState(false)
     const [showOpenModal, setShowOpenModal] = useState(false)
     const [openRecord, setOpenRecord] = useState({})
+    const [selectedIds, setSelectedIds] = useState([])
+    const [showBulkDelete, setShowBulkDelete] = useState(false)
     if (adding) {
         if (addResult.Success) {
             message.success('add record success')
@@ -60,7 +64,40 @@ export const RecordContainer = ({
     }
 
     if (deleteRecordResult) {
-        deleteRecordResult.Success ? message.success('delete success') : message.warn(deleteRecordResult.Data)
+        if (deleteRecordResult.Success) {
+            fetchRecord(params)
+            message.success('delete success') 
+        } else {
+            message.warn(deleteRecordResult.Data)
+        }
+    }
+
+    const handleBulkDelete = () => {
+        deleteRecord(selectedIds)
+    }
+
+    const rowSelection = {
+        onChange: rowSelectedKeys => {
+            setSelectedIds(rowSelectedKeys)
+            if (!showBulkDelete && rowSelectedKeys.length > 0) {
+                setShowBulkDelete(true)
+            }
+            if (rowSelectedKeys.length === 0) {
+                setShowBulkDelete(false)
+            }
+        }
+    }
+
+    const handleEndUsingBox = recordid => {
+        endUsingBox(recordid)
+    }
+
+    if (endUsingBoxResult) {
+        if (endUsingBoxResult.Success) {
+            message.success('endUsingBox success')
+        } else {
+            message.warn(`endUsingBox fail: ${endUsingBoxResult.Errors[0]}`)
+        }
     }
 
     const columns = [
@@ -112,6 +149,8 @@ export const RecordContainer = ({
                         </Popconfirm>
                         <Divider type="vertical" />
                         <Button type="primary" onClick={() => handleClickOpen(record)}>OPEN</Button>
+                        <Divider type="vertical" />
+                        <Button onClick={() => handleEndUsingBox(text)}>EndUsingBox</Button>
                     </div>
                 )
             }
@@ -126,16 +165,20 @@ export const RecordContainer = ({
                 handleCancel={() => setShowOpenModal(false)}
                 result={openBoxResult}
                 />
-            <RecordSearchForm handleClickAdd={() => setShowAddModal(true)} handleSearch={handleSearch}/>
+            <RecordSearchForm 
+                handleClickAdd={() => setShowAddModal(true)} 
+                handleSearch={handleSearch}
+                handleBulkDelete={handleBulkDelete}
+                bulkDeleteVisible={showBulkDelete}
+                />
             <RecordCreateModal visible={showAddModal} handleCancel={() => setShowAddModal(false)} handleRecordAdd={handleRecordAdd} />
             {loading ? <Spin type="large" /> : null}
-            <Table dataSource={records} rowKey="id" scroll={{x: 1300}} columns={columns}/>
+            <Table dataSource={records} rowKey="id" scroll={{x: 1300}} columns={columns} rowSelection={rowSelection}/>
         </div>
     )
 }
 
 const mapStateToProps = state => {
-    console.log(state)
     return {
         loading: state.record.loading,
         records: state.record.records,
@@ -143,6 +186,7 @@ const mapStateToProps = state => {
         addResult: state.record.addResult,
         openBoxResult: state.record.openBoxResult,
         deleteRecordResult: state.record.deleteRecordResult,
+        endUsingBoxResult: state.record.endUsingBoxResult,
     }
 }
 
@@ -151,7 +195,8 @@ const mapDispatchToProps = dispatch => {
         fetchRecord: query => dispatch(fetchRecords(query)),
         addRecord: (record) => dispatch(addRecord(record)),
         openBox: model => dispatch(openBox(model)),
-        deleteRecord: ids => dispatch(deleteRecord(ids))
+        deleteRecord: ids => dispatch(deleteRecord(ids)),
+        endUsingBox: recordid => dispatch(endUsingBox(recordid)),
     }
 }
 
