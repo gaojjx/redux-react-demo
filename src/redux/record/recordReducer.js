@@ -1,4 +1,4 @@
-import { FETCH_RECORD_REQUEST, FETCH_RECORD_SUCCESS, UPDATE_RECORD_REQUEST, UPDATE_RECORD_RESULT, ADD_RECORD_REQUEST, ADD_RECORD_RESULT, OPEN_BOX_REQUEST, OPEN_BOX_RESULT, DELETE_RECORD_RESULT, DELETE_RECORD_DONE, ENDUSINGBOX_RESULT, ENDUSINGBOX_DONE } from "./recordTypes"
+import { FETCH_RECORD_REQUEST, FETCH_RECORD_SUCCESS, UPDATE_RECORD_REQUEST, UPDATE_RECORD_RESULT, ADD_RECORD_REQUEST, ADD_RECORD_RESULT, OPEN_BOX_RESULT, DELETE_RECORD_RESULT, DELETE_RECORD_DONE, ENDUSINGBOX_RESULT, ENDUSINGBOX_DONE } from "./recordTypes"
 
 const initialState = {
     records: [],
@@ -9,7 +9,7 @@ const initialState = {
     endUsingBoxResult: undefined,
 }
 
-const recordReducer = (state = initialState, action) => {
+export const recordReducer = (state = initialState, action) => {
     switch (action.type) {
         case FETCH_RECORD_REQUEST:
             return {
@@ -72,5 +72,3 @@ const recordReducer = (state = initialState, action) => {
             return state
     }
 }
-
-export default recordReducer

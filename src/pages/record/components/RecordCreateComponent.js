@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Modal, Form, Input } from 'antd'
 
 const RecordCreateComponent = ({form, visible, children, handleCancel, handleRecordAdd}) => {

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {Table, Button, Popconfirm, message, Divider} from "antd";
 import {connect} from "react-redux";
+import { withRouter } from 'react-router-dom'
 import {fetchUsers, fetchUserDetail, bulkRecovery} from "../../redux/user/userAction";
 import { UserSearchForm } from "./components/UserSearchForm"
 import { UserDetailFormModal } from './components/UserDetailForm';
@@ -85,7 +86,6 @@ const UsersContainer = ({usersData, fetchUsers, fetchUserDetail, userDetail, bul
 };
 
 const mapStateToProps = state => {
-    console.log(state)
     return {
         usersData: state.user.users,
         userDetail: state.user.userDetail ? state.user.userDetail : {},
@@ -102,4 +102,4 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(UsersContainer);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(UsersContainer));

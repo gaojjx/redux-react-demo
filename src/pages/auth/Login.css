@@ -1,0 +1,12 @@
+.normal {
+    background: #ffffff;
+    text-align: center;
+    padding: 40px;
+    margin: 40px auto;
+    max-width: 400px;
+  }
+  
+  .login-form {
+    max-width: 300px;
+  }
+  

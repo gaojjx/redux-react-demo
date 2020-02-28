@@ -10,7 +10,7 @@ const initialParam = {
     type: 0
 }
 
-export const RecordContainer = ({
+const RecordContainer = ({
         loading,
         records,
         fetchRecord,

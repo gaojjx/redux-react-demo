@@ -1,0 +1,28 @@
+.top-header {
+    height: 50px;
+    padding: 0 15px;
+    display: flex;
+    border-bottom: 1px solid #d8d8d8;
+}
+.header-left {
+    flex: auto
+}
+.header-right {
+    width: 60px;
+    height: 50px;
+    display: flex;
+    justify-items: flex-end;
+    align-items: center;
+}
+.drop-list {
+    padding: 10px 15px;
+}
+.logo {
+	height: 70px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: initial;
+	font-size: 28px;
+	background: transparent;
+}
