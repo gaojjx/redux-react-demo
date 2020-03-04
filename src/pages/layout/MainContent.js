@@ -6,7 +6,6 @@ import { connect } from 'react-redux'
 const { Content } = Layout
 
 const MainContent = ({userInfo, history, ...rest}) => {
-    console.log(userInfo)
     return (
         <Content style={{padding: '15px'}}>
             <Switch>

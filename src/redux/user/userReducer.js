@@ -28,12 +28,10 @@ const userReducer = (state = initState, action) => {
                 userDetail: action.payload
             }
         case FETCH_USER_BULK_RECOVERY:
-            console.log(action)
             return {
                 ...state,
             }
         case FETCH_USER_BULK_RECOVERY_RESULT:
-            console.log(state)
             return {
                 ...state,
                 recovery: true,

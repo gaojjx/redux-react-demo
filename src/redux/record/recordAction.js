@@ -53,7 +53,6 @@ export const addRecord = record => {
 }
 
 export const addRecordResult = result => {
-    console.log(result)
     return {
         type: ADD_RECORD_RESULT,
         payload: result
