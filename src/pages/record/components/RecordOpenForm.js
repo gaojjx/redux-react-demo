@@ -1,13 +1,12 @@
 import React from 'react'
-import { Form, Modal, Input, InputNumber, message } from 'antd'
+import { Modal, Input, InputNumber, Form, Alert } from 'antd';
+import { connect } from 'react-redux';
 
-const RecordOpenComponent = ({form, record, handleOpen, visible, handleCancel, result}) => {
-    const handleSubmit = () => {
-        form.validateFields((err, values) => {
-            if (!err) {
-                handleOpen(values)
-            }
-        })
+const RecordOpenForm = ({record, handleOpen, visible, handleCancel, openBoxSuccess, openBoxFail}) => {
+    const [form] = Form.useForm()
+    const handleSubmit = async () => {
+        const values = await form.validateFields()
+        handleOpen({...values, id: record.id})
     }
 
     const onCancel = () => {
@@ -15,31 +14,30 @@ const RecordOpenComponent = ({form, record, handleOpen, visible, handleCancel, r
         form.resetFields()
     }
     
-    if (result !== undefined) {
-        result.Success ? message.success('open success') : message.warn(result.Data)
-    } 
     return (
         <Modal title="OPEN Box" visible={visible} onOk={handleSubmit} onCancel={onCancel}>
-            <Form onSubmit={handleSubmit}>
-                <Form.Item label="CabinetNumber">
-                    {form.getFieldDecorator('caibnetnumber', {
-                        initialValue: record.cabinetnumber
-                    })(<Input readOnly/>)}
+            <Form onSubmit={handleSubmit} form={form} initialValues={{...record}}>
+                <Form.Item label="CabinetNumber" name="cabinetnumber" >
+                    <Input readOnly/>
                 </Form.Item>
-                <Form.Item label="PersonNumber">
-                    {form.getFieldDecorator('personnumber', {
-                        initialValue: record.personnumber
-                    })(<Input readOnly/>)}
+                <Form.Item label="PersonNumber" name="personnumber">
+                    <Input readOnly/>
                 </Form.Item>
-                <Form.Item label="Action">
-                    {form.getFieldDecorator('action', {
-                        initialValue: 0,
-                        message: 'Action number is required'
-                    })(<InputNumber min={0} />)}
+                <Form.Item label="Action" name="action" rules={[{required: true, message: "Action number is required!"}]}>
+                    <InputNumber min={0} />
                 </Form.Item>
             </Form>
+            { openBoxSuccess && <Alert type="success" message='open success' /> }
+            { openBoxFail && <Alert type="warning" message={openBoxFail}/>}
         </Modal>
     )
 }
 
-export const RecordOpenForm = Form.create({name: 'record_open_form'})(RecordOpenComponent)
+const mapStateToProps = state => {
+    return {
+        openBoxSuccess: state.record.openBoxSuccess,
+        openBoxFail: state.record.openBoxFail,
+    }
+}
+
+export default connect(mapStateToProps)(RecordOpenForm)

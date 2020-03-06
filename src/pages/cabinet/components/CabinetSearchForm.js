@@ -1,60 +1,51 @@
 import React from 'react'
-import { Form, Row, Col, Button, Input, InputNumber, DatePicker, Checkbox } from 'antd'
+import { Row, Col, Button, Input, InputNumber, DatePicker, Checkbox, Form } from 'antd';
 import './CabinetSearchForm.css'
 
-const CabinetSearchForm = ({form, handleSearch, handleAdd, handleBulkActive, handleBulkUnActive, showBulkBtn}) => {
-    const { getFieldDecorator } = form
-    const handleClickSearch = () => {
-        form.validateFields((err, values) => {
-            if (!err) {
-                handleSearch(values)
-            }
-        })
+export const CabinetSearchForm = ({handleSearch, handleAdd, handleBulkActive, handleBulkUnActive, showBulkBtn}) => {
+    const [form] = Form.useForm()
+    const handleClickSearch = async () => {
+        const values = await form.validateFields()
+        handleSearch(values)
     }
     
     return (
         <div>
-            <Form className="ant-advanced-search-form">
+            <Form form={form} className="ant-advanced-search-form" initialValues={{type: 0, active: false}}>
                 <Row gutter={24}>
                     <Col span={6}>
-                        <Form.Item label="name">
-                            { getFieldDecorator('name')(<Input placeholder="name" />) }
+                        <Form.Item label="name" name="name" >
+                            <Input placeholder="name" />
                         </Form.Item>
                     </Col>
                     <Col span={6} >
-                        <Form.Item label="location">
-                            { getFieldDecorator('location')(<Input placeholder="location" />) }
+                        <Form.Item label="location" name="location" >
+                            <Input placeholder="location" />
                         </Form.Item>
                     </Col>
                     <Col span={6} >
-                        <Form.Item label="boardnumber">
-                            { getFieldDecorator('boardnumber')(<Input />) }
+                        <Form.Item label="boardnumber" name="boardnumber" >
+                            <Input />
                         </Form.Item>
                     </Col>
                     <Col span={6} >
-                        <Form.Item label="type" labelCol={{span: 14}} wrapperCol={{span: 2}}>
-                            { getFieldDecorator('type', {
-                                initialValue: 0,
-                                message: "cannot less zero"
-                            })(<InputNumber min={0} />)}
+                        <Form.Item label="type" name="type"  labelCol={{span: 14}} wrapperCol={{span: 2}}>
+                            <InputNumber min={0} />
                         </Form.Item>
                     </Col>
                     <Col span={10}>
-                        <Form.Item label="CreatedStartTime">
-                            { getFieldDecorator('createdstarttime')(<DatePicker />) }
+                        <Form.Item label="CreatedStartTime" name="createdstarttime" >
+                            <DatePicker />
                         </Form.Item>
                     </Col>
                     <Col span={10}>
-                        <Form.Item label="CreatedEndTime">
-                            { getFieldDecorator('createdendtime')(<DatePicker />) }
+                        <Form.Item label="CreatedEndTime" name="createdendtime" >
+                            <DatePicker />
                         </Form.Item>
                     </Col>
                     <Col span={4}>
-                        <Form.Item label="active">
-                            { getFieldDecorator('active', {
-                                valuePropName: 'checked',
-                                initialValue: false
-                            })(<Checkbox />)}
+                        <Form.Item label="active" name="active" valuePropName="checked">
+                            <Checkbox />
                         </Form.Item>
                     </Col>
                 </Row>
@@ -80,5 +71,3 @@ const CabinetSearchForm = ({form, handleSearch, handleAdd, handleBulkActive, han
         </div>
     )
 }
-
-export default Form.create({name: 'cabinet_search_form'})(CabinetSearchForm)

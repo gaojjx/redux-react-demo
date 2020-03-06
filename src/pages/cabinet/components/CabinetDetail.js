@@ -9,10 +9,9 @@ const CabinetDetail = ({cabinet}) => {
     return (
         <Card title={cabinet ? `${cabinet.name} Detail`: ''} extra={<Link to="/cabinet">back</Link>}>
             {
-                cabinet ?
+                cabinet &&
                 Object.entries(cabinet)
                     .map(([key, value]) => <p key={key}><span>{key}: </span> {value}</p>)
-                : null
             }
         </Card>
         

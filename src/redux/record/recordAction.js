@@ -1,11 +1,11 @@
-import { FETCH_RECORD_REQUEST, FETCH_RECORD_SUCCESS, ADD_RECORD_RESULT, OPEN_BOX_RESULT, DELETE_RECORD_RESULT, DELETE_RECORD_DONE, ENDUSINGBOX_RESULT, ENDUSINGBOX_DONE } from "./recordTypes"
+import { FETCH_RECORD_REQUEST, FETCH_RECORD_SUCCESS, DELETE_RECORD_RESULT, DELETE_RECORD_DONE, ENDUSINGBOX_RESULT, ENDUSINGBOX_DONE, OPEN_BOX_SUCCESS, OPEN_BOX_FAIL, ADD_RECORD_SUCCESS, ADD_RECORD_FAIL, ADD_RECORD_REQUEST } from "./recordTypes"
 
 const URI = '/record'
 
 export const fetchRecords = query => {
     const token = localStorage.getItem('token')
     const params = Object.entries(query)
-        .filter(([key, value]) => value !== undefined && value !== '')
+        .filter(([key, value]) => value !== undefined && value !== false && value !== '')
         .map(([key, value]) => `${key}=${value}`)
         .join('&')
     return dispatch => {
@@ -35,6 +35,12 @@ export const fetchRecordsSuccess = records => {
     }
 }
 
+export const addRecordRequest = () => {
+    return dispatch => {
+        dispatch({type: ADD_RECORD_REQUEST})
+    }
+}
+
 export const addRecord = record => {
     const token = localStorage.getItem('token')
     return dispatch => {
@@ -47,15 +53,16 @@ export const addRecord = record => {
             }
         }).then(res => res.json())
         .then(data => {
-            dispatch(addRecordResult(data))
+            // dispatch(addRecordResult(data))
+            if (data.Success) {
+                dispatch({type: ADD_RECORD_SUCCESS})
+            } else {
+                dispatch({
+                    type: ADD_RECORD_FAIL,
+                    payload: data.Errors[0]
+                })
+            }
         })
-    }
-}
-
-export const addRecordResult = result => {
-    return {
-        type: ADD_RECORD_RESULT,
-        payload: result
     }
 }
 
@@ -74,15 +81,18 @@ export const openBox = model => {
             }
         ).then(res => res.json())
         .then(data => {
-            dispatch(openBoxResult(JSON.parse(data)))
+            const result = JSON.parse(data)
+            if (result.Success) {
+                dispatch({
+                    type: OPEN_BOX_SUCCESS,
+                })
+            } else {
+                dispatch({
+                    type: OPEN_BOX_FAIL,
+                    payload: result.Data
+                })
+            }
         })
-    }
-}
-
-export const openBoxResult = result => {
-    return {
-        type: OPEN_BOX_RESULT,
-        payload: result
     }
 }
 

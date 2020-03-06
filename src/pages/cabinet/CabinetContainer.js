@@ -1,15 +1,15 @@
 import { connect } from 'react-redux'
 
 import React, { useState, useEffect } from 'react'
-import CabinetSearchForm from './components/CabinetSearchForm'
+import { CabinetSearchForm } from './components/CabinetSearchForm'
 import { fetchCabinets, getCabinetDetail, deleteCabinet, updateCabinet, bulkActive, bulkUnActive } from '../../redux/cabinet/cabinetAction'
 import { Button, Table, Popconfirm, Divider, Alert } from 'antd'
 import { Link } from 'react-router-dom'
-import { CabinetUpdateFormModal } from './components/CabinetUpdateForm'
+import { CabinetUpdateForm } from './components/CabinetUpdateForm'
 
 
 const initialParams = {
-    type: 0
+    type: 0,
 }
 
 const CabinetContainer = ({
@@ -24,14 +24,14 @@ const CabinetContainer = ({
         bulkActive,
         bulkUnActive,
         bulkResult,
+        cabinet,
     }) => {
     const [params, setParams] = useState(initialParams)
-    useEffect(() => fetchCabinets(params), [])
+    useEffect(() => fetchCabinets(params), [fetchCabinets, params])
     const [selectedIds, setSelectedIds] = useState([])
     const [showBulkBtn, setShowBulkBtn] = useState(false)
     const handleSearch = values => {
         setParams(values)
-        fetchCabinets(values)
     }
 
     const getDetail = id => {
@@ -127,9 +127,9 @@ const CabinetContainer = ({
                         <Popconfirm title="Are you sure DELETE this cabinet?" onConfirm={() => deleteCabinet(text)}>
                             <Button type="danger">Delete</Button>
                         </Popconfirm>
-                        <CabinetUpdateFormModal cabinet={record} handleUpdate={handleUpdate}>
-                            <Button>Update</Button>
-                        </CabinetUpdateFormModal>
+                        <CabinetUpdateForm cabinet={cabinet} handleUpdate={handleUpdate}>
+                            <Button onClick={() => getDetail(text)}>Update</Button>
+                        </CabinetUpdateForm>
                     </>
                 )
             }
@@ -189,6 +189,7 @@ const mapStateToProps = state => {
         deleteResult: state.cabinet.deleteResult,
         updateResult: state.cabinet.updateResult,
         bulkResult: state.cabinet.bulkResult,
+        cabinet: state.cabinet.cabinetDetail,
     }
 }
 

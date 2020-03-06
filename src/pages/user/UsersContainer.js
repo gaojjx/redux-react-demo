@@ -4,7 +4,7 @@ import {connect} from "react-redux";
 import { withRouter } from 'react-router-dom'
 import {fetchUsers, fetchUserDetail, bulkRecovery} from "../../redux/user/userAction";
 import { UserSearchForm } from "./components/UserSearchForm"
-import { UserDetailFormModal } from './components/UserDetailForm';
+import { UserDetailForm } from './components/UserDetailForm';
 const initialParams = {
     name: '',
     number: undefined,
@@ -14,12 +14,14 @@ const initialParams = {
 const UsersContainer = ({usersData, fetchUsers, fetchUserDetail, userDetail, bulkRecovery, recovery, bulkRecoveryResult}) => {
     const [selectedIds, setSelectedIds] = useState([])
     const [showBulk, setShowBulk] = useState(false)
+    const [params, setParams] = useState(initialParams)
     useEffect(() => {
-        fetchUsers(initialParams)
-    }, []);
+        fetchUsers(params)
+    }, [fetchUsers, params]);
 
-    const handleSearch = value => {
-        fetchUsers(value)
+    const handleSearch = values => {
+        setParams(values)
+        // fetchUsers(values)
     }
 
     const rowSelection = {
@@ -65,9 +67,9 @@ const UsersContainer = ({usersData, fetchUsers, fetchUserDetail, userDetail, bul
             render: text => {
                 return (
                     <>
-                        <UserDetailFormModal userDetail={userDetail} userId={text} fetchUserDetail={fetchUserDetail}>
+                        <UserDetailForm userDetail={userDetail} userId={text} fetchUserDetail={fetchUserDetail}>
                             <Button type="primary">Detail</Button>
-                        </UserDetailFormModal>
+                        </UserDetailForm>
                         <Divider type="vertical"/>
                         <Popconfirm onConfirm={() => handleRecovery(text)} title="Are you sure RECOVERY this user?">
                             <Button type="danger">Recovery</Button>

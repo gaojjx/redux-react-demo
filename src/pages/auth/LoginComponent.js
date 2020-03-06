@@ -1,66 +1,39 @@
 import React from 'react'
 import { connect } from 'react-redux'
 import { login } from '../../redux/login/loginAction'
-import { Form, Input, Icon, Button, Alert, Spin } from 'antd'
+import { LockOutlined, UserOutlined } from '@ant-design/icons/lib/index';
+import { Input, Button, Alert, Spin, Form } from 'antd';
 import './Login.css'
 import { withRouter } from 'react-router-dom'
 
 const LoginComponent = ({
-    form, 
     login,
     loggingIn,
     error,
 }) => {
-    const { getFieldDecorator } = form
-    const handleSubmit = e => {
-        e.preventDefault();
-        form.validateFields((err, values) => {
-            if (!err) {
-                login({...values})
-            }
-        })
+    const onFinish = values => {
+        login({...values})
     }
     return (
         <div className="normal">
-            <Form 
-                onSubmit={handleSubmit} 
-                className="login-form" 
-            // style={{maxWidth: '300px',}}
-            >
-                <Form.Item>
-                    {getFieldDecorator('username', {
-                        rules: [{ required: true, message: 'Please input your username!' }],
-                    })(
-                        <Input
-                        prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                        placeholder="Username"
-                        />,
-                    )}
+            <Form onFinish={onFinish} className="login-form">
+                <Form.Item name="username" rules={[{required: true, message: "Please input your username!"}]}>
+                    <Input prefix={<UserOutlined />} placeholder="Username"/>
+                </Form.Item>
+                <Form.Item name="password" rules={[{required: true, message: "Please input your password!"}]}>
+                    <Input prefix={<LockOutlined />} placeholder="Password" type="password" />
                 </Form.Item>
                 <Form.Item>
-                    {getFieldDecorator('password', {
-                        rules: [{ required: true, message: 'Please input your Password!' }],
-                    })(
-                        <Input
-                        prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                        type="password"
-                        placeholder="Password"
-                        />,
-                    )}
-                </Form.Item>
-                <Form.Item>
-                    {
-                        loggingIn
-                            ? (<Spin tip="LoggingIn...">
-                                <Button type="primary" htmlType="submit">Log in</Button>
-                                </Spin>)
-                            : <Button type="primary" htmlType="submit">Log in</Button>
-                    }
+                    <Spin spinning={loggingIn !== undefined && loggingIn}>
+                        <Button type="primary" className="login-form-button" htmlType="submit">
+                            Log in
+                        </Button>
+                    </Spin>
                 </Form.Item>
             </Form>
             { error && <Alert type="warning" closable message={error} /> }
         </div>
-    )
+    );
 }
 
 const mapStateToProps = (state) => {
@@ -76,4 +49,5 @@ const mapDispatchToProps = dispatch => {
     }
 }
 
-export const Login = Form.create({name: 'login_form'})(withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginComponent)))
+// export const Login = Form.create({name: 'login_form'})(withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginComponent)))
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(LoginComponent))

@@ -1,62 +1,48 @@
 import React from 'react'
-import { Form, Row, Col, Input, Checkbox, Button, InputNumber, DatePicker } from 'antd'
+import { Form, Row, Col, Input, Checkbox, Button, InputNumber, DatePicker } from 'antd';
 import './RecordSearchForm.css'
+import RecordCreateComponent from './RecordCreateComponent';
 const {Item} = Form
-const RecordSearchComponent = ({form, handleSearch, handleClickAdd, handleBulkDelete, bulkDeleteVisible}) => {
-    const { getFieldDecorator } = form
-    const checkNumber = (rule, value, callback) => {
-        if (value >= 0) {
-            return callback()
-        }
-        callback('cannot less zero')
-    }
-    const handleClickSearch = () => {
-        form.validateFields((err, values) => {
-            if (!err) {
-                handleSearch(values)
-            }
-        })
+export const RecordSearchForm = ({handleSearch, handleClickAdd, handleBulkDelete, bulkDeleteVisible}) => {
+    const [form] = Form.useForm()
+    const handleClickSearch = async () => {
+        const values = await form.validateFields()
+        handleSearch(values)
     }
     return (
         <div>
-            <Form className="ant-advanced-search-form">
+            <Form form={form} className="ant-advanced-search-form" initialValues={{history: true, type: 0}}>
                 <Row gutter={24}>
                     <Col span={6}>
-                        <Item label="StudentNumber">
-                            { getFieldDecorator('studentnumber')(<Input/>)}
+                        <Item label="StudentNumber" name="StudentNumber" >
+                            <Input/>
                         </Item>
                     </Col>
                     <Col span={6} >
-                        <Item label="CabinetNumber">
-                            { getFieldDecorator('cabinetnumber')(<Input />)}
+                        <Item label="CabinetNumber" name="CabinetNumber" >
+                            <Input />
                         </Item>
                     </Col>
                     <Col span={4} offset={2}>
-                        <Item label="history">
-                            { getFieldDecorator('history', {
-                                valuePropName: 'checked',
-                                initialValue: false
-                            })(<Checkbox />) }
+                        <Item label="history" name="history" valuePropName="checked" >
+                           <Checkbox />
                         </Item>
                     </Col>
                     <Col span={6}>
-                        <Item label="type">
-                            { getFieldDecorator('type', {
-                                initialValue: 0,
-                                rules: [{validator: checkNumber}]
-                            })(<InputNumber min={0}/>) }
+                        <Item label="type" name="type">
+                           <InputNumber min={0}/>
                         </Item>
                     </Col>
                 </Row>
                 <Row span={24}>
                     <Col span={8}>
-                        <Item label="StartedTime">
-                            {getFieldDecorator('startedtime')(<DatePicker />)}
+                        <Item label="StartedTime" name="StartedTime" >
+                            <DatePicker />
                         </Item>
                     </Col>
                     <Col span={8}>
-                        <Item label="EndedTime">
-                            {getFieldDecorator('endedtime')(<DatePicker />)}
+                        <Item label="EndedTime" name="EndedTime" >
+                            <DatePicker />
                         </Item>
                     </Col>
                 </Row>
@@ -64,7 +50,9 @@ const RecordSearchComponent = ({form, handleSearch, handleClickAdd, handleBulkDe
                     <Col span={8}>
                         {bulkDeleteVisible ? <Button type="danger" onClick={handleBulkDelete}>Delete</Button> : null}
                         &emsp;
-                        <Button type="primary" onClick={handleClickAdd}>Add</Button>
+                        <RecordCreateComponent>
+                            <Button type="primary" onClick={handleClickAdd}>Add</Button>
+                        </RecordCreateComponent>
                     </Col>
                     <Col span={16} style={{textAlign: 'right'}}>
                         <Button type="primary" onClick={handleClickSearch}>Search</Button>
@@ -76,5 +64,3 @@ const RecordSearchComponent = ({form, handleSearch, handleClickAdd, handleBulkDe
         </div>
     )
 }
-
-export const RecordSearchForm = Form.create({name: 'record_search_form'})(RecordSearchComponent)

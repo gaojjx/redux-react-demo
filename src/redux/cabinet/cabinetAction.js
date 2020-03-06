@@ -3,7 +3,7 @@ const URI = '/cabinet'
 export const fetchCabinets = query => {
     const token = localStorage.getItem('token')
     const params = Object.entries(query)
-        .filter(([key, value]) => value !== undefined && value !== '')
+        .filter(([key, value]) => value !== undefined && value !== false && value !== '')
         .map(([key, value]) => `${key}=${value}`)
         .join('&')
     return dispatch => {

@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
-import { Form, Modal, } from 'antd'
+import { Modal } from 'antd';
 
-const UserDetailForm = ({userDetail, children, userId, fetchUserDetail}) => {
+export const UserDetailForm = ({userDetail, children, userId, fetchUserDetail}) => {
 
     const [visible, setVisible] = useState(false)
     const items = Object.entries(userDetail)
@@ -24,5 +24,3 @@ const UserDetailForm = ({userDetail, children, userId, fetchUserDetail}) => {
         </div>
     )
 }
-
-export const UserDetailFormModal = Form.create({name: 'user_detail_form'})(UserDetailForm)

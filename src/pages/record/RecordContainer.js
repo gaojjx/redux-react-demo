@@ -1,47 +1,37 @@
 import React, {useEffect, useState} from 'react'
 import { connect } from 'react-redux'
-import { fetchRecords, addRecord, openBox, deleteRecord, endUsingBox } from '../../redux/record/recordAction'
+import { fetchRecords, openBox, deleteRecord, endUsingBox } from '../../redux/record/recordAction'
 import { Table, Popconfirm, Button, Spin, message, Divider } from 'antd';
-import { RecordCreateModal } from './components/RecordCreateComponent';
 import { RecordSearchForm } from './components/RecordSearchForm';
-import { RecordOpenForm } from './components/RecordOpenForm';
+import RecordOpenForm from './components/RecordOpenForm';
+import RecordCreateComponent from './components/RecordCreateComponent';
+import { OPEN_BOX_REQUEST } from '../../redux/record/recordTypes';
 
 const initialParam = {
-    type: 0
+    type: 0,
+    history: true,
 }
 
 const RecordContainer = ({
         loading,
         records,
         fetchRecord,
-        adding,
-        addResult,
-        addRecord,
-        openBoxResult,
+        openBoxRequest,
         openBox,
         deleteRecord,
         deleteRecordResult,
         endUsingBox,
         endUsingBoxResult,
-    }) => {
-    useEffect(() => fetchRecord(initialParam), []);
+}) => {
     const [params, setParams] = useState(initialParam)
-    const [showAddModal, setShowAddModal] = useState(false)
+    useEffect(() => fetchRecord(params), [fetchRecord, params]);
     const [showOpenModal, setShowOpenModal] = useState(false)
     const [openRecord, setOpenRecord] = useState({})
     const [selectedIds, setSelectedIds] = useState([])
     const [showBulkDelete, setShowBulkDelete] = useState(false)
-    if (adding) {
-        if (addResult.Success) {
-            message.success('add record success')
-            setShowAddModal(false)
-            fetchRecord(params)
-        } else {
-            message.warn(addResult.Errors[0])
-        }
-    }
 
     const handleClickOpen = record => {
+        openBoxRequest()
         setOpenRecord(record)
         setShowOpenModal(true)
     }
@@ -49,14 +39,9 @@ const RecordContainer = ({
     const handleOpen = values => {
         openBox(values)
     }
-    
-    const handleRecordAdd = record => {
-        addRecord(record)
-    }
 
     const handleSearch = values => {
         setParams(values)
-        fetchRecord(values)
     }
 
     const handleDelete = id => {
@@ -163,15 +148,13 @@ const RecordContainer = ({
                 visible={showOpenModal} 
                 record={openRecord} 
                 handleCancel={() => setShowOpenModal(false)}
-                result={openBoxResult}
                 />
             <RecordSearchForm 
-                handleClickAdd={() => setShowAddModal(true)} 
                 handleSearch={handleSearch}
                 handleBulkDelete={handleBulkDelete}
                 bulkDeleteVisible={showBulkDelete}
                 />
-            <RecordCreateModal visible={showAddModal} handleCancel={() => setShowAddModal(false)} handleRecordAdd={handleRecordAdd} />
+            <RecordCreateComponent />
             {loading ? <Spin type="large" /> : null}
             <Table dataSource={records} rowKey="id" scroll={{x: 1300}} columns={columns} rowSelection={rowSelection}/>
         </div>
@@ -182,9 +165,8 @@ const mapStateToProps = state => {
     return {
         loading: state.record.loading,
         records: state.record.records,
-        adding: state.record.adding,
-        addResult: state.record.addResult,
-        openBoxResult: state.record.openBoxResult,
+        openBoxSuccess: state.record.openBoxSuccess,
+        openBoxFail: state.record.openBoxFail,
         deleteRecordResult: state.record.deleteRecordResult,
         endUsingBoxResult: state.record.endUsingBoxResult,
     }
@@ -193,7 +175,7 @@ const mapStateToProps = state => {
 const mapDispatchToProps = dispatch => {
     return {
         fetchRecord: query => dispatch(fetchRecords(query)),
-        addRecord: (record) => dispatch(addRecord(record)),
+        openBoxRequest: () => dispatch({type: OPEN_BOX_REQUEST}),
         openBox: model => dispatch(openBox(model)),
         deleteRecord: ids => dispatch(deleteRecord(ids)),
         endUsingBox: recordid => dispatch(endUsingBox(recordid)),

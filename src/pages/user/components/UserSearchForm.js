@@ -1,16 +1,14 @@
 import React from 'react'
-import { Form, Input, Button, Row, Col, Checkbox} from 'antd'
+import { Input, Button, Row, Col, Checkbox, InputNumber, Form } from 'antd';
 import './UserSearchForm.css'
 
-const UserSearchFormComponent = ({handleSearch, form, bulkDelete, showBulk}) => {
-    const { getFieldDecorator } = form
-    const onSearch = e => {
+export const UserSearchForm = ({handleSearch, bulkDelete, showBulk}) => {
+    const [form] = Form.useForm();
+
+    const onSearch = async e => {
         e.preventDefault();
-        form.validateFields((err, value) => {
-            if (!err) {
-                handleSearch(value)
-            }
-        })
+        const values = await form.validateFields()
+        handleSearch(values)
     }
 
     const clear = () => {
@@ -25,34 +23,26 @@ const UserSearchFormComponent = ({handleSearch, form, bulkDelete, showBulk}) => 
     }
 
     return (
-        <Form className="ant-advanced-search-form">
+        <Form form={form} className="ant-advanced-search-form" initialValues={{type: 0, active: true}}>
             <Row gutter={24}>
-                <Col span={4}>
-                    <Form.Item label="number">
-                        {getFieldDecorator('number')(<Input type="number" />)}
+                <Col span={6}>
+                    <Form.Item label="number" name="number">
+                        <InputNumber min={0} />
                     </Form.Item>
                 </Col>
                 <Col span={8}>
-                    <Form.Item label="name">
-                        {getFieldDecorator('name')(<Input placeholder="name" />)}
+                    <Form.Item label="name" name="name">
+                        <Input placeholder="name" />
                     </Form.Item>
                 </Col>
                 <Col span={6}>
-                    <Form.Item label="type">
-                        {getFieldDecorator('type', {
-                            initialValue: 0,
-                            rules: [
-                                {validator: checkType}
-                            ]
-                        })(<Input type="number"/>)}
+                    <Form.Item label="type" name="type" validateStatus={checkType}>
+                       <InputNumber value="0" type="number" min={0}/>
                     </Form.Item>
                 </Col>
                 <Col span={4}>
-                    <Form.Item label="active">
-                        {getFieldDecorator('active', {
-                            valuePropName: 'checked',
-                            initialValue: true
-                        })(<Checkbox />)}
+                    <Form.Item label="active" name="active" valuePropName="checked">
+                        <Checkbox/>
                     </Form.Item>
                 </Col>
             </Row>
@@ -67,5 +57,3 @@ const UserSearchFormComponent = ({handleSearch, form, bulkDelete, showBulk}) => 
         
     )
 }
-
-export const UserSearchForm = Form.create({name: 'user_search_form'})(UserSearchFormComponent)
